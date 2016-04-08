@@ -22,7 +22,7 @@
  *   '',  'bb'  => 'bb'
  */
 function concatenateStrings(value1, value2) {
-    throw new Error('Not implemented');
+    return value1.concat(value2);
 }
 
 
@@ -38,7 +38,7 @@ function concatenateStrings(value1, value2) {
  *   ''      => 0
  */
 function getStringLength(value) {
-    throw new Error('Not implemented');
+    return value.length;
 }
 
 /**
@@ -55,7 +55,7 @@ function getStringLength(value) {
  *   'Chuck','Norris'  => 'Hello, Chuck Norris!'
  */
 function getStringFromTemplate(firstName, lastName) {
-    throw new Error('Not implemented');
+    return 'Hello, '.concat(firstName, ' ', lastName, '!');
 }
 
 /**
@@ -69,7 +69,7 @@ function getStringFromTemplate(firstName, lastName) {
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-    throw new Error('Not implemented');
+    return value.slice(7, -1);
 }
 
 
@@ -84,7 +84,7 @@ function extractNameFromTemplate(value) {
  *   'cat'       => 'c'
  */
 function getFirstChar(value) {
-    throw new Error('Not implemented');
+    return value[0];
 }
 
 /**
@@ -99,7 +99,8 @@ function getFirstChar(value) {
  *   '\tHello, World! ' => 'Hello, World!'
  */
 function removeLeadingAndTrailingWhitespaces(value) {
-    throw new Error('Not implemented');
+    //есть спецификация, в ней один метод, который это делает
+    return value.trim();
 }
 
 /**
@@ -114,7 +115,7 @@ function removeLeadingAndTrailingWhitespaces(value) {
  *   'cat', 3 => 'catcatcat'
  */
 function repeatString(value, count) {
-    throw new Error('Not implemented');
+   return value.repeat(count);
 }
 
 /**
@@ -130,7 +131,7 @@ function repeatString(value, count) {
  *   'ABABAB','BA' => 'ABAB'
  */
 function removeFirstOccurrences(str, value) {
-    throw new Error('Not implemented');
+    return str.replace(value,'');
 }
 
 /**
@@ -145,7 +146,7 @@ function removeFirstOccurrences(str, value) {
  *   '<a>' => 'a'
  */
 function unbracketTag(str) {
-    throw new Error('Not implemented');
+    return str.slice(1,-1);
 }
 
 
@@ -160,21 +161,21 @@ function unbracketTag(str) {
  *  'abcdefghijklmnopqrstuvwxyz' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
  */
 function convertToUpperCase(str) {
-    throw new Error('Not implemented');
+    return str.toUpperCase();
 }
 
 /**
  * Extracts e-mails from single string with e-mails list delimeted by semicolons
  *
  * @param {string} str
- * @return {array}
+ * @return {Array}
  *
  * @example
  *   'angus.young@gmail.com;brian.johnson@hotmail.com;bon.scott@yahoo.com' => ['angus.young@gmail.com', 'brian.johnson@hotmail.com', 'bon.scott@yahoo.com']
  *   'info@gmail.com' => ['info@gmail.com']
  */
 function extractEmails(str) {
-    throw new Error('Not implemented');
+    return str.split(';');
 }
 
 /**
@@ -201,7 +202,7 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(width, height) {
-    throw new Error('Not implemented');
+    return '┌' + '─'.repeat(width-2)+'┐\n'+('│'+' '.repeat(width-2)+'│\n').repeat(height-2)+'└' + '─'.repeat(width-2)+'┘\n';
 }
 
 
@@ -221,7 +222,13 @@ function getRectangleString(width, height) {
  *
  */
 function encodeToRot13(str) {
-    throw new Error('Not implemented');
+    var Z = 90;
+    var z = 122;
+    var allLetter = 26;
+    var jump = 13;
+    return str.replace(/[a-zA-Z]/g,function(str){
+        return String.fromCharCode((str<="Z"?Z:z)>=(str = str.charCodeAt(0)+jump)?str:str-allLetter);
+    });
 }
 
 /**
@@ -238,7 +245,10 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-    throw new Error('Not implemented');
+    //переделать
+    //return value.search('/[a-zA-Z]/g')?true:false;
+    return (typeof (value))==='string'
+        || (value instanceof String);
 }
 
 
@@ -267,7 +277,33 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-    throw new Error('Not implemented');
+    //скинуть Буглу
+    var a;
+    var b;
+    var c;
+    if(value.length===2) {
+        a = value[0];
+        b = value[1];
+    }
+    else{
+        a = value[0];
+        b = value[2];
+    }
+    //if (typeof a === 'number'){ c = a - 1;}
+    if( a > '1' && a <= '9'){
+        c = a.charCodeAt(0) - '1'.charCodeAt(0);
+    }
+    else {
+        if(a==='A'){c=0;}
+        if(a==='1'){c=9;}
+        if(a==='J'){c=10;}
+        if(a==='Q'){c=11;}
+        if(a==='K'){c=12;}
+    }
+    if(b==='♣'){return c;}
+    if(b==='♦'){return c+13;}
+    if(b==='♥'){return c+26;}
+    if(b==='♠'){return c+39;}
 }
 
 
