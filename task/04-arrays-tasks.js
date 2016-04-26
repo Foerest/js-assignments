@@ -24,9 +24,7 @@
  */
 function findElement(arr, value) {
    //throw new Error('Not implemented');
-   return arr.findIndex(function(val) {
-      if(val===value) return val;
-   });
+   return arr.indexOf(value);
 }
 
 /**
@@ -353,9 +351,7 @@ function getPositivesCount(arr) {
           if((typeof currentValue)==='number') return true;
           else return false;
        })
-       .sort(function(a, b) {
-          return a - b;
-       })
+       .sort()
        .reduceRight(function(val){
           return val;
        });
@@ -640,9 +636,7 @@ function group(array, keySelector, valueSelector) {
  */
 function selectMany(arr, childrenSelector) {
     //throw new Error('Not implemented');
-   return Array.from(arr.reduce(function(prVal,currentValue){
-      return prVal.concat(currentValue);
-   }),childrenSelector);
+   return arr.reduce((prVal,currentValue) => prVal.concat(childrenSelector(currentValue)), []);
 }
 
 

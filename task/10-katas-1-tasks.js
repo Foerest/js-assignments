@@ -17,8 +17,81 @@
  *  ]
  */
 function createCompassPoints() {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
     var sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    var i=32;
+    var j=1;
+    var azim=360;
+    var temp;
+    var deg;
+    var count=0;
+    var result=new Array(32);
+    result[0]={ abbreviation : 'N',  azimuth : 0.00};
+    for(j;j<32;j++){
+        azim=360;
+        result[j]={azimuth: j*azim/i};
+        deg= result[j].azimuth;
+        count=0;
+        while(deg>=90) {
+            deg = deg - 90;
+            count++;
+        }
+        if(deg%90===0){
+            temp=sides[count];
+        }
+        else {
+            if(count%2===1) deg=90-deg;
+            switch (deg) {
+                case 11.25:
+                {
+                    temp = sides[count] + 'b' + sides[(count>2?-1:count) + 1];
+                    break;
+                }
+                case 22.5:
+                {
+                    temp = sides[count] + sides[count] + sides[(count>2?-1:count) + 1];
+                    break;
+                }
+                case 33.75:
+                {
+                    temp = sides[count] + sides[(count>2?-1:count) + 1] + 'b' + sides[count];
+                    break;
+                }
+                case 45:
+                {
+                    temp = sides[count] + sides[(count>2?-1:count) + 1];
+                    break;
+                }
+                case 56.25:
+                {
+                    temp = sides[count] + sides[(count>2?-1:count) + 1] + 'b' + sides[(count>2?-1:count) + 1];
+                    break;
+                }
+                case 67.5:
+                {
+                    temp = sides[(count>2?-1:count) + 1] + sides[count]+ sides[(count>2?-1:count) + 1] ;
+                    break;
+                }
+                case 78.75:
+                {
+                    temp = sides[(count>2?-1:count) + 1] + 'b' + sides[count];
+                    break;
+                }
+            }
+        }
+        result[j].abbreviation=count%2===1?reverseString(temp):temp;
+    }
+    return result;
+}
+
+function reverseString(str) {
+    //throw new Error('Not implemented');
+    var i=0;
+    var rs=new Array(str.length);
+    for (i;i<str.length;i++){
+        rs[i]=(str[str.length-1-i]);
+    }
+    return rs.join('');
 }
 
 

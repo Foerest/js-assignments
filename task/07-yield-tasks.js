@@ -33,7 +33,21 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
+    var bottle = 99;
+    var i=0;
+    var words1=' bottles of beer on the wall, ';
+    var Specwords1=' bottle of beer on the wall.';
+    var words2=' bottles of beer.';
+    var words3='Take one down and pass it around, ';
+    var finish=new Array('1 bottle of beer on the wall, 1 bottle of beer.','Take one down and pass it around, no more bottles of beer on the wall.','No more bottles of beer on the wall, no more bottles of beer.','Go to the store and buy some more, 99 bottles of beer on the wall.');
+    while (bottle>1){
+        yield bottle.toString()+words1+(bottle--).toString()+words2;
+        yield words3+bottle.toString()+((bottle===1)?Specwords1:words1.slice(0,-2)+'.');
+    }
+    while(i<4) {
+        yield finish[i++];
+    }
 }
 
 
@@ -47,7 +61,14 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
+    var F1 = 0, F2 = 1;
+    while (1){
+        yield F1;
+        var p=F1;
+        F1=F2;
+        F2=p+F2;
+    }
 }
 
 
@@ -82,7 +103,50 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
+    var Arr = [root];
+    while (Arr.length > 0) {
+        var v = Arr.pop();
+        yield v;
+        if (v.children) {
+            for (var edges of v.children.reverse()) Arr.push(edges);
+        }
+    }
+    /*var Arr=new Array(1);
+    Arr.shift();
+    //return Arr;
+    while(1){
+        if(root.visit!=1){
+            yield root;
+            root.visit=1;
+            var i=1;
+            while(Array.isArray(root.children) && i<root.children.length){
+                Arr.unshift(root);
+                i++;
+            }
+        }
+        if(root.children instanceof Object)
+            while(Array.isArray(root.children)){
+                if(root.children[0].visit!=1){
+                    yield root.children[0];
+                    root.children[0].visit=1;
+                }
+                if(Array.isArray(root.children[0].children) && root.children[0].children.length>1)
+                    Arr.unshift(root.children[0]);
+                var p=root.children[0];
+                root.children.shift();
+                root=p;
+            }
+        if(Arr.length>0){
+            root=Arr[0];
+            Arr.shift();
+        }
+        else{
+            return;
+        }
+        //yield Arr;
+        //yield root.n;
+    }*/
 }
 
 
@@ -108,7 +172,36 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
+    /*var Arr = [root];
+    while (Arr.length > 0) {
+        var v = Arr.shift();
+        yield v;
+        if (v.children) {
+            for (var edges of v.children) Arr.push(edges);
+        }
+    }*/
+    var Arr=[];
+    while(1){
+        if(root.visit!==2){
+            yield root;
+            root.visit=2;
+        }
+        var i=0;
+        while(i<root.children.length){
+            if(Array.isArray(root.children[i].children))
+                Arr.push(root.children[i]);
+            if(root.children[i].visit!=2)
+                yield root.children[i];
+            root.children[i].visit=2;
+            i++;
+        }
+        if(Arr.length>0){
+            root=Arr[0];
+            Arr.shift();
+        }
+        else
+        return;
+    }
 }
 
 
@@ -126,7 +219,16 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
+    var iterator1 = source1();
+    var iterator2 = source2();
+    var Arr = [];
+    Arr.push(iterator1.next().value);
+    Arr.push(iterator2.next().value);
+    Arr.sort((a, b) => {
+        return a - b;
+    });
+    yield* Arr;
 }
 
 
