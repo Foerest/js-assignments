@@ -34,7 +34,47 @@
  *
  */
 function parseBankAccount(bankAccount) {
-    throw new Error('Not implemented');
+    var map = [];
+    map.push([" _ ",
+              "| |",
+              "|_|"]);
+    map.push(["   ",
+              "  |",
+              "  |"]);
+    map.push([" _ ",
+              " _|",
+              "|_"]);
+    map.push([" _ ",
+              " _|",
+              " _|"]);
+    map.push(["   ",
+              "|_|",
+              "  |"]);
+    map.push([" _ ",
+              "|_ ",
+              " _|"]);
+    map.push([" _ ",
+              "|_ ",
+              "|_|"]);
+    map.push([" _ ",
+              "  |",
+              "  |"]);
+    map.push([" _ ",
+              "|_|",
+              "|_|"]);
+    map.push([" _ ",
+              "|_|",
+              " _|"]);
+    var Arr=bankAccount.split('\n');
+    Arr.pop();
+    var result='';
+    for(var i=0;i<Arr[0].length;i+=3){
+        for(var j=0;j<10;j++){
+            if(Arr[0].slice(i,i+3).includes(map[j][0]) && Arr[1].slice(i,i+3).includes(map[j][1]) && Arr[2].slice(i,i+3).includes(map[j][2]))
+                result+=j;
+        }
+    }
+    return result;
 }
 
 
@@ -63,7 +103,21 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'characters.'
  */
 function* wrapText(text, columns) {
-    throw new Error('Not implemented');
+    //throw new Error('Not implemented');
+    var Arr=text.split(' '),
+        result=[];
+    var temp='';
+    for(let i=0;i<Arr.length;i++){
+        if(Arr[i].length+temp.length<=columns )
+            temp=temp+Arr[i]+' ';
+        else{
+            result.push(temp.slice(0,-1));
+            temp=Arr[i]+' ';
+        }
+    }
+    result.push(temp.slice(0,-1));
+    for(let i of result)
+        yield i;
 }
 
 
@@ -101,9 +155,46 @@ const PokerRank = {
 
 function getPokerHandRank(hand) {
     throw new Error('Not implemented');
+    hand=hand.map(x=>getCardId(x)).sort();
+    var countStrFl=0,
+        countOfKind=0;
+    for(var i=0;i<hand.length-1;i++){
+        if(hand[i]+1===hand[i+1]) countStrFl++;
+        if(hand[i]+13===hand[i+1]) countOfKind++;
+    }
+    if(countStrFl===hand.length-1) return PokerRank.StraightFlush;
+
+    return PokerRank.HighCard;
 }
 
-
+function getCardId(value) {
+    var a;
+    var b;
+    var c;
+    if(value.length===2) {
+        a = value[0];
+        b = value[1];
+    }
+    else{
+        a = value[0];
+        b = value[2];
+    }
+    //if (typeof a === 'number'){ c = a - 1;}
+    if( a > '1' && a <= '9'){
+        c = a.charCodeAt(0) - '1'.charCodeAt(0);
+    }
+    else {
+        if(a==='A'){c=0;}
+        if(a==='1'){c=9;}
+        if(a==='J'){c=10;}
+        if(a==='Q'){c=11;}
+        if(a==='K'){c=12;}
+    }
+    if(b==='♣'){return c;}
+    if(b==='♦'){return c+13;}
+    if(b==='♥'){return c+26;}
+    if(b==='♠'){return c+39;}
+}
 /**
  * Returns the rectangles sequence of specified figure.
  * The figure is ASCII multiline string comprised of minus signs -, plus signs +, vertical bars | and whitespaces.
@@ -135,7 +226,32 @@ function getPokerHandRank(hand) {
  *    '+-------------+\n'
  */
 function* getFigureRectangles(figure) {
-   throw new Error('Not implemented');
+   //throw new Error('Not implemented');
+    var Arr=figure.split('\n');
+    Arr.pop();
+    var result=[];
+    for(var i=0;i<Arr.length-1;i++){
+        var left=-1;
+        for(var j=0;j<Arr[i].length;j++) {
+            if (Arr[i][j]==='+' && left>-1 && i!=Arr.length-1 && Arr[i+1][j]!==' ') {
+                var count=i+1;
+                while(Arr[count][j]!=='+')
+                    count++;
+                count--;
+                left++;
+                result.push([j - left,count - i]);
+            }
+            if (Arr[i][j] === '+' && Arr[i+1][j]!==' ') {
+                left = j;
+            }
+        }
+    }
+    for(let i of result){
+        yield getRectangleString(i[0], i[1]);
+    }
+    function getRectangleString(width, height) {
+        return '+' + '-'.repeat(width)+'+\n'+('|'+' '.repeat(width)+'|\n').repeat(height)+'+' + '-'.repeat(width)+'+\n';
+    }
 }
 
 

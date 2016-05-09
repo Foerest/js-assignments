@@ -18,82 +18,66 @@
  */
 function createCompassPoints() {
     //throw new Error('Not implemented');
-    var sides = ['N','E','S','W'];  // use array of cardinal directions only!
-    var i=32;
-    var j=1;
-    var azim=360;
-    var temp;
-    var deg;
-    var count=0;
-    var result=new Array(32);
-    result[0]={ abbreviation : 'N',  azimuth : 0.00};
-    for(j;j<32;j++){
-        azim=360;
-        result[j]={azimuth: j*azim/i};
-        deg= result[j].azimuth;
-        count=0;
-        while(deg>=90) {
+    var sides = ['N', 'E', 'S', 'W'];  // use array of cardinal directions only!
+    var  j, temp, deg, count = 0, result = [];
+    var dev1, dev;
+    for (j=0; j < 32; j++) {
+        var az = j * 360 / 32;
+        deg = az;
+        count = 0;
+        while (deg >= 90) {
             deg = deg - 90;
             count++;
         }
-        if(deg%90===0){
-            temp=sides[count];
-        }
-        else {
-            if(count%2===1) deg=90-deg;
-            switch (deg) {
-                case 11.25:
-                {
-                    temp = sides[count] + 'b' + sides[(count>2?-1:count) + 1];
-                    break;
-                }
-                case 22.5:
-                {
-                    temp = sides[count] + sides[count] + sides[(count>2?-1:count) + 1];
-                    break;
-                }
-                case 33.75:
-                {
-                    temp = sides[count] + sides[(count>2?-1:count) + 1] + 'b' + sides[count];
-                    break;
-                }
-                case 45:
-                {
-                    temp = sides[count] + sides[(count>2?-1:count) + 1];
-                    break;
-                }
-                case 56.25:
-                {
-                    temp = sides[count] + sides[(count>2?-1:count) + 1] + 'b' + sides[(count>2?-1:count) + 1];
-                    break;
-                }
-                case 67.5:
-                {
-                    temp = sides[(count>2?-1:count) + 1] + sides[count]+ sides[(count>2?-1:count) + 1] ;
-                    break;
-                }
-                case 78.75:
-                {
-                    temp = sides[(count>2?-1:count) + 1] + 'b' + sides[count];
-                    break;
-                }
+        if (count>2) dev = sides[0];
+        else dev = sides[count+1];
+        if (sides[count]===sides[0] || sides[count]===sides[2]) dev1 = sides[count]+dev;
+        else dev1 = dev+sides[count];
+        switch (deg) {
+            case 0:
+            {
+                result.push({abbreviation: sides[count], azimuth: az});
+                break;
+            }
+            case 11.25:
+            {
+                result.push({abbreviation: sides[count] + 'b' + dev, azimuth: az});
+                break;
+            }
+            case 22.5:
+            {
+                result.push({abbreviation: sides[count] + dev1, azimuth: az});
+                break;
+            }
+            case 33.75:
+            {
+                result.push({abbreviation: dev1 + 'b' + sides[count], azimuth: az});
+                break;
+            }
+            case 45:
+            {
+                result.push({abbreviation: dev1, azimuth: az});
+                break;
+            }
+            case 56.25:
+            {
+                result.push({abbreviation: dev1 + 'b' + dev, azimuth: az});
+                break;
+            }
+            case 67.5:
+            {
+                result.push({abbreviation: dev + dev1, azimuth: az});
+                break;
+            }
+            case 78.75:
+            {
+                result.push({abbreviation: dev + 'b' + sides[count], azimuth: az});
+                break;
             }
         }
-        result[j].abbreviation=count%2===1?reverseString(temp):temp;
     }
     return result;
 }
-
-function reverseString(str) {
-    //throw new Error('Not implemented');
-    var i=0;
-    var rs=new Array(str.length);
-    for (i;i<str.length;i++){
-        rs[i]=(str[str.length-1-i]);
-    }
-    return rs.join('');
-}
-
 
 /**
  * Expand the braces of the specified string.
@@ -129,7 +113,29 @@ function reverseString(str) {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-    throw new Error('Not implemented');
+    var Arr = [str];
+    for(var i = 0; Arr[0].indexOf('{')>-1; i++) {
+        var left;
+        if(Arr[0][i]=='{')
+            left = i+1;
+        if(Arr[0][i]=='}') {
+            var string=Arr[0].slice(left, i),
+                temp = [],
+                arr = string.split(',');
+            for(let i of arr) {
+                temp.push(Arr[0].replace('{'+string+'}', i));
+            }
+            Arr.shift();
+            temp.map((j)=> {
+                if(Arr.indexOf(j)===-1)
+                    Arr.push(j);
+            });
+            i=0;
+        }
+    }
+    for(let res of Arr) {
+        yield res;
+    }
 }
 
 
@@ -161,7 +167,34 @@ function* expandBraces(str) {
  *
  */
 function getZigZagMatrix(n) {
-    throw new Error('Not implemented');
+    var Arr1=[];
+    var Arr2=[];
+    for(var i=0; i<n; i++){
+        for(var j=0; j<=i; j++){
+            if(i%2===1){
+                Arr1.push([j,i-j]);
+                Arr2.unshift([n-1-j,n-1-i+j]);
+            }
+            else{
+                Arr1.push([i-j,j]);
+                Arr2.unshift([n-1-i+j,n-1-j]);
+            }
+        }
+    }
+    var k=0;
+    while(k++<n){
+        Arr2.shift();
+    }
+    Arr1=Arr1.concat(Arr2);
+    //console.log(Arr1,Arr2);
+    var Arr=new Array(n);
+    for(var i=0;i<n;i++){
+        Arr[i]=new Array(n);
+    }
+    for(var i=0;i<Math.pow(n,2);i++){
+        Arr[Arr1[i][0]][Arr1[i][1]]=i;
+    }
+    return Arr;
 }
 
 
@@ -186,7 +219,10 @@ function getZigZagMatrix(n) {
  *
  */
 function canDominoesMakeRow(dominoes) {
-    throw new Error('Not implemented');
+    var result = dominoes.map(val => {
+        return val[0] + val[1];
+    }).reduce((pVal, cVal) => pVal + cVal);
+    return result % 2 !== 0;
 }
 
 
@@ -210,7 +246,18 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-    throw new Error('Not implemented');
+    var result = '';
+    for (var i = 0; i < nums.length; i++) {
+        var j = i;
+        while (nums[j]+1 === nums[j + 1]) j++;
+        if(j>i+1){
+            result += `${ nums[i] }-${ nums[j] },`;
+            i = j;
+        }
+        else
+            result += `${ nums[i] },`;
+    }
+    return result.slice(0, -1);
 }
 
 module.exports = {
